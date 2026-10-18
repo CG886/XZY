@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>WeChat 联机版</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, Helvetica, sans-serif; }
+    body { background: #ededed; height: 100vh; overflow: hidden; color: #333; }
+    
+    .page { display: none; height: 100vh; flex-direction: column; position: absolute; inset: 0; background: #fff; z-index: 10; }
+    .page.active { display: flex; }
+
+    .header { background: #ededed; height: 50px; display: flex; align-items: center; justify-content: center; position: relative; font-size: 17px; font-weight: 600; border-bottom: 1px solid #dcdcdc; flex-shrink: 0; }
+    .header .left-btn { position: absolute; left: 15px; font-size: 20px; cursor: pointer; }
+    .header .right-btn { position: absolute; right: 15px; font-size: 20px; cursor: pointer; }
+
+    /* 登录/注册 */
+    #auth-page { background: #fff; padding: 40px 20px; }
+    .auth-box { max-width: 350px; margin: 0 auto; width: 100%; }
+    .auth-box h1 { text-align: center; color: #07c160; font-size: 28px; margin-bottom: 30px; }
+    .input-group { margin-bottom: 15px; }
+    .input-group input { width: 100%; height: 45px; border: 1px solid #ddd; border-radius: 6px; padding: 0 12px; font-size: 16px; outline: none; }
+    .avatar-upload { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; }
+    .avatar-preview { width: 80px; height: 80px; border-radius: 50%; background: #eee; object-fit: cover; margin-bottom: 10px; border: 2px solid #ddd; }
+    .avatar-upload label { background: #f0f0f0; padding: 6px 15px; border-radius: 20px; font-size: 14px; cursor: pointer; }
+    .avatar-upload input[type="file"] { display: none; }
+    .btn { width: 100%; height: 45px; background: #07c160; color: #fff; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+    .switch-auth { text-align: center; margin-top: 20px; font-size: 14px; color: #576b95; cursor: pointer; }
+
+    /* 主界面 */
+    #main-page { background: #ededed; }
+    .tab-content { flex: 1; overflow-y: auto; display: none; }
+    .tab-content.active { display: block; }
+    
+    .chat-item { background: #fff; padding: 12px 15px; display: flex; align-items: center; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+    .chat-avatar { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; margin-right: 12px; flex-shrink: 0; }
+    .chat-info { flex: 1; min-width: 0; }
+    .chat-name { font-size: 16px; margin-bottom: 4px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; }
+    .chat-msg { font-size: 13px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .tab-bar { height: 55px; background: #f7f7f7; display: flex; border-top: 1px solid #dcdcdc; flex-shrink: 0; }
+    .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; font-size: 10px; cursor: pointer; }
+    .tab-item.active { color: #07c160; }
+    .tab-item i { font-size: 20px; margin-bottom: 2px; font-style: normal; }
+
+    /* 聊天界面 */
+    #chat-page { background: #ededed; }
+    .chat-msg-area { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; }
+    .msg-row { display: flex; align-items: flex-start; }
+    .msg-row.me { flex-direction: row-reverse; }
+    .msg-avatar { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
+    
+    /* 气泡样式 */
+    .msg-bubble { display: inline-block; width: fit-content; max-width: 70%; padding: 10px 14px; border-radius: 6px; font-size: 15px; position: relative; word-wrap: break-word; line-height: 1.4; }
+    .msg-row.them .msg-bubble { background: #fff; margin-left: 10px; }
+    .msg-row.me .msg-bubble { background: #95ec69; margin-right: 10px; }
+    
+    /* 纯图片发送，无气泡背景 */
+    .msg-bubble.is-image { padding: 0; background: transparent !important; border: none; }
+    .msg-image { max-width: 150px; border-radius: 6px; display: block; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+    /* VIP 金色气泡 */
+    .msg-bubble.vip-gold { background: linear-gradient(135deg, #ffe066, #ffb703) !important; color: #333 !important; border: 1px solid #e6a800; }
+
+    .msg-error { color: red; font-size: 20px; display: flex; align-items: center; justify-content: center; margin: 0 10px; font-weight: bold; }
+    
+    .chat-input-area { height: 55px; background: #f7f7f7; display: flex; align-items: center; padding: 0 10px; border-top: 1px solid #dcdcdc; flex-shrink: 0; gap: 10px; }
+    .chat-input-area input[type="text"] { flex: 1; height: 38px; border: none; border-radius: 4px; padding: 0 10px; font-size: 15px; outline: none; }
+    .icon-btn { font-size: 24px; color: #666; cursor: pointer; }
+    .send-btn { background: #07c160; color: #fff; border: none; padding: 0 16px; height: 36px; border-radius: 4px; font-size: 14px; cursor: pointer; }
+
+    /* 搜索页 */
+    #search-page { background: #ededed; }
+    .search-bar { padding: 10px; background: #fff; display: flex; gap: 10px; }
+    .search-bar input { flex: 1; height: 36px; border: 1px solid #ddd; border-radius: 4px; padding: 0 10px; outline: none; }
+    .user-card { background: #fff; padding: 15px; display: flex; align-items: center; margin-top: 10px; }
+    .add-btn { background: #07c160; color: #fff; border: none; padding: 6px 15px; border-radius: 4px; cursor: pointer; }
+
+    /* 弹窗 */
+    .modal-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 999; }
+    .modal-mask.active { display: flex; }
+    .modal { background: #fff; width: 85%; max-width: 320px; border-radius: 12px; overflow: hidden; text-align: center; padding: 20px; }
+    .modal h3 { font-size: 18px; margin-bottom: 10px; }
+    .modal p { font-size: 14px; color: #666; margin-bottom: 20px; }
+    .modal-btns { display: flex; gap: 10px; }
+    .modal-btns button { flex: 1; padding: 10px; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; }
+    .btn-cancel { background: #f0f0f0; color: #333; }
+    .btn-ok { background: #07c160; color: #fff; }
+
+    .profile-card { background: #fff; padding: 20px; display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; }
+    .profile-card img { width: 60px; height: 60px; border-radius: 6px; margin-right: 15px; object-fit: cover;}
+    .profile-info p { font-size: 14px; color: #888; margin-top: 5px; }
+    
+    #loading { position: fixed; inset: 0; background: #fff; display: flex; align-items: center; justify-content: center; z-index: 9999; font-size: 16px; color: #07c160; }
+
+    /* ======== VIP 样式重构 ======== */
+    .vip-name-text { color: #ff9800 !important; font-weight: bold; }
+    
+    /* 橙色半圆矩形底座 */
+    .vip-badge {
+        display: inline-block;
+        background-color: #ff9800; /* 橙色底 */
+        padding: 2px 8px;
+        border-radius: 12px; /* 宽边半圆效果 */
+        margin-left: 6px;
+        vertical-align: middle;
+        line-height: 1;
+        box-shadow: 0 1px 3px rgba(255,152,0,0.5);
+    }
+    
+    /* 内部文字：金变红渐变 */
+    .vip-badge-text {
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 0.5px;
+        background: linear-gradient(90deg, #FFD700, #FF0000);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+    }
+
+    /* 底部操作菜单 */
+    #action-menu { position: fixed; bottom: -100%; left: 0; right: 0; background: #f7f7f7; z-index: 1000; transition: bottom 0.3s; border-top-left-radius: 12px; border-top-right-radius: 12px; overflow: hidden; }
+    #action-menu.active { bottom: 0; }
+    .action-btn { display: block; width: 100%; padding: 15px; background: #fff; border: none; border-bottom: 1px solid #eee; font-size: 16px; color: #333; cursor: pointer; text-align: center; outline: none;}
+    .action-btn.danger { color: red; }
+    .action-btn.cancel { background: #f7f7f7; border-bottom: none; margin-top: 8px; color: #666; }
+</style>
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+</head>
+<body>
+    <div id="loading">正在连接网络...</div>
+
+<!-- 登录/注册 -->
+<div class="page active" id="auth-page">
+    <div class="auth-box">
+        <h1 id="auth-title">登录</h1>
+        <div id="register-fields" style="display:none;">
+            <div class="avatar-upload">
+                <img id="avatar-preview" class="avatar-preview" src="">
+                <label for="avatar-input">从相册选头像 (可选)</label>
+                <input type="file" id="avatar-input" accept="image/*">
+            </div>
+        </div>
+        <div class="input-group"><input type="text" id="auth-nickname" placeholder="请输入昵称 (用于登录)"></div>
+        <div class="input-group"><input type="password" id="auth-pwd" placeholder="请输入密码"></div>
+        <button class="btn" id="auth-btn">登录</button>
+        <div class="switch-auth" id="switch-auth">没有账号？去注册</div>
+    </div>
+</div>
+
+<!-- 主界面 -->
+<div class="page" id="main-page">
+    <div class="header"><span id="header-title">微信</span><span class="right-btn" id="btn-to-search">➕</span></div>
+    <div class="tab-content active" id="tab-chats" style="background:#fff;"></div>
+    <div class="tab-content" id="tab-contacts" style="background:#fff;"></div>
+    <div class="tab-content" id="tab-discover" style="padding:20px; color:#999; text-align:center;">朋友圈开发中...</div>
+    
+    <div class="tab-content" id="tab-me" style="background:#ededed;">
+        <div class="profile-card" id="open-vip-btn">
+            <img id="my-avatar" src="">
+            <div class="profile-info">
+                <h3 id="my-nickname" style="display:flex; align-items:center;"></h3>
+                <p id="my-wxid"></p>
+            </div>
+            <div style="margin-left:auto; font-size:12px; color:#ff9800; border:1px solid #ff9800; padding:4px 8px; border-radius:10px;">开通会员</div>
+        </div>
+        <div style="background:#fff; padding:15px; text-align:center; color:red; cursor:pointer;" id="btn-logout">退出登录</div>
+    </div>
+
+    <div class="tab-bar">
+        <div class="tab-item active" data-tab="chats"><i>💬</i>微信</div>
+        <div class="tab-item" data-tab="contacts"><i>👥</i>通讯录</div>
+        <div class="tab-item" data-tab="discover"><i>🧭</i>发现</div>
+        <div class="tab-item" data-tab="me"><i>👤</i>我</div>
+    </div>
+</div>
+
+<!-- 聊天页 -->
+<div class="page" id="chat-page">
+    <div class="header">
+        <span class="left-btn" id="chat-back">＜</span>
+        <span id="chat-title" style="display:flex; align-items:center;"></span>
+        <span class="right-btn" id="chat-menu">⋮</span>
+    </div>
+    <div class="chat-msg-area" id="chat-msg-area"></div>
+    <div class="chat-input-area">
+        <label class="icon-btn" for="chat-img-input">🖼️</label>
+        <input type="file" id="chat-img-input" accept="image/*" style="display:none;">
+        <input type="text" id="chat-input" placeholder="输入消息...">
+        <button class="send-btn" id="chat-send">发送</button>
+    </div>
+</div>
+
+<!-- 搜索页 -->
+<div class="page" id="search-page">
+    <div class="header"><span class="left-btn" id="search-back">＜</span>添加好友</div>
+    <div class="search-bar">
+        <input type="text" id="search-input" placeholder="搜索昵称/微信号">
+        <button class="send-btn" id="search-btn">搜索</button>
+    </div>
+    <div id="search-results"></div>
+</div>
+
+<!-- 底部菜单 -->
+<div id="action-menu">
+    <button class="action-btn" id="menu-blacklist">拉黑对方</button>
+    <button class="action-btn danger" id="menu-delete">删除好友</button>
+    <button class="action-btn cancel" id="menu-cancel">取消</button>
+</div>
+
+<!-- 弹窗 -->
+<div class="modal-mask" id="req-modal">
+    <div class="modal">
+        <h3>好友申请</h3>
+        <p id="req-text"></p>
+        <div class="modal-btns">
+            <button class="btn-cancel" id="req-reject">拒绝</button>
+            <button class="btn-ok" id="req-accept">同意</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-mask" id="alert-modal">
+    <div class="modal">
+        <h3 id="alert-title">提示</h3>
+        <p id="alert-text"></p>
+        <button class="btn-ok" id="alert-ok" style="width:100%;">确定</button>
+    </div>
+</div>
+
+<div class="modal-mask" id="vip-modal">
+    <div class="modal">
+        <h3 style="color:#ff9800;">开通 VIP 会员</h3>
+        <p>请输入 6 位卡密兑换</p>
+        <input type="text" id="vip-code" placeholder="请输入卡密" style="width:100%; height:40px; text-align:center; font-size:18px; border:1px solid #ff9800; border-radius:6px; outline:none; margin-bottom:15px;">
+        <div class="modal-btns">
+            <button class="btn-cancel" id="vip-cancel">取消</button>
+            <button class="btn-ok" id="vip-ok" style="background:#ff9800;">兑换</button>
+        </div>
+    </div>
+</div>
+<script>
+// ================= 核心数据 =================
+const BROKER_URL = 'wss://broker.emqx.io:8084/mqtt';
+const TOPIC = 'wechat_realtime_room_8888';
+let client = null;
+let isMqttConnected = false;
+
+const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23555"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>';
+
+if(!localStorage.getItem('wechat_users')) localStorage.setItem('wechat_users', JSON.stringify([]));
+if(!localStorage.getItem('wechat_chats')) localStorage.setItem('wechat_chats', JSON.stringify({}));
+
+let currentUser = null; 
+let currentChatId = null; 
+let pendingReq = null; 
+let tempAvatarBase64 = ''; 
+let onlineUsers = {}; 
+
+const $ = id => document.getElementById(id);
+const usersDB = () => JSON.parse(localStorage.getItem('wechat_users'));
+const saveUsers = data => localStorage.setItem('wechat_users', JSON.stringify(data));
+const chatsDB = () => JSON.parse(localStorage.getItem('wechat_chats'));
+const saveChats = data => localStorage.setItem('wechat_chats', JSON.stringify(data));
+
+function showAlert(title, text) {
+    $('alert-title').innerText = title;
+    $('alert-text').innerText = text;
+    $('alert-modal').classList.add('active');
+}
+$('alert-ok').onclick = () => $('alert-modal').classList.remove('active');
+
+function switchPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    $(pageId).classList.add('active');
+}
+
+function genWxId() { return 'wxid_' + Math.random().toString(36).substr(2, 8); }
+
+window.onload = () => {
+    const savedName = localStorage.getItem('saved_name');
+    if (savedName) {
+        $('auth-nickname').value = savedName;
+        $('auth-pwd').focus();
+    }
+    $('avatar-preview').src = DEFAULT_AVATAR;
+    $('my-avatar').src = DEFAULT_AVATAR;
+};
+
+// ================= 网络通信 =================
+client = mqtt.connect(BROKER_URL);
+
+client.on('connect', () => {
+    isMqttConnected = true;
+    $('loading').style.display = 'none';
+    client.subscribe(TOPIC);
+});
+
+client.on('error', () => {
+    $('loading').innerText = '网络连接失败，请刷新重试';
+});
+
+client.on('message', (topic, message) => {
+    if (!currentUser) return;
+    try {
+        const data = JSON.parse(message.toString());
+        if (data.fromId === currentUser.id) return;
+
+        if (data.type === 'search_req') {
+            const kw = data.keyword.toLowerCase();
+            if (currentUser.nickname.toLowerCase().includes(kw) || currentUser.wxid.toLowerCase().includes(kw)) {
+                client.publish(TOPIC, JSON.stringify({
+                    type: 'search_res',
+                    toId: data.fromId,
+                    user: currentUser
+                }));
+            }
+        }
+        else if (data.type === 'search_res' && data.toId === currentUser.id) {
+            onlineUsers[data.user.id] = data.user;
+            if ($('search-page').classList.contains('active')) {
+                const kw = $('search-input').value.trim().toLowerCase();
+                if (data.user.nickname.toLowerCase().includes(kw) || data.user.wxid.toLowerCase().includes(kw)) {
+                    renderSearchResult(data.user);
+                }
+            }
+        }
+        else if (data.type === 'friend_req' && data.toId === currentUser.id) {
+            pendingReq = data;
+            $('req-text').innerText = `${data.fromUser.nickname} 想添加您为好友`;
+            $('req-modal').classList.add('active');
+        }
+        else if (data.type === 'friend_accept' && data.toId === currentUser.id) {
+            let users = usersDB();
+            let me = users.find(u => u.id === currentUser.id);
+            if (!me.friends.includes(data.fromUser.id)) {
+                me.friends.push(data.fromUser.id);
+                saveUsers(users);
+                currentUser = me;
+                if(!onlineUsers[data.fromUser.id]) onlineUsers[data.fromUser.id] = data.fromUser;
+                showAlert('提示', '对方已同意你的好友申请');
+                renderMainPage();
+            }
+        }
+        else if (data.type === 'msg' && data.toId === currentUser.id) {
+            const chats = chatsDB();
+            const chatKey = [currentUser.id, data.fromId].sort().join('_');
+            if (!chats[chatKey]) chats[chatKey] = [];
+            chats[chatKey].push({ senderId: data.fromId, type: data.msgType, text: data.content, time: Date.now(), error: false });
+            saveChats(chats);
+            
+            if(!onlineUsers[data.fromId]) onlineUsers[data.fromId] = data.fromUser;
+
+            if (currentChatId === data.fromId) {
+                openChat(getFriendInfo(data.fromId), true);
+            }
+            renderMainPage();
+        }
+    } catch(e) {}
+});
+function getFriendInfo(id) {
+    let u = usersDB().find(x => x.id === id);
+    if (!u && onlineUsers[id]) u = onlineUsers[id];
+    return u || { id: id, nickname: '未知用户', avatar: DEFAULT_AVATAR, wxid: '', isVip: false };
+}
+
+// ================= 登录/注册 =================
+let isLoginMode = true;
+$('switch-auth').onclick = () => {
+    isLoginMode = !isLoginMode;
+    $('auth-title').innerText = isLoginMode ? '登录' : '注册';
+    $('auth-btn').innerText = isLoginMode ? '登录' : '注册';
+    $('switch-auth').innerText = isLoginMode ? '没有账号？去注册' : '已有账号？去登录';
+    $('register-fields').style.display = isLoginMode ? 'none' : 'block';
+};
+
+$('avatar-input').onchange = (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => { 
+        tempAvatarBase64 = ev.target.result; 
+        $('avatar-preview').src = tempAvatarBase64; 
+    };
+    reader.readAsDataURL(file);
+};
+
+$('auth-btn').onclick = () => {
+    const nickname = $('auth-nickname').value.trim();
+    const pwd = $('auth-pwd').value.trim();
+    const users = usersDB();
+
+    if (!nickname || !pwd) return showAlert('提示', '昵称和密码不能为空');
+
+    if (isLoginMode) {
+        const user = users.find(u => u.nickname === nickname && u.pwd === pwd);
+        if (user) {
+            localStorage.setItem('saved_name', nickname);
+            loginSuccess(user);
+        } else {
+            showAlert('错误', '昵称或密码错误');
+        }
+    } else {
+        if (users.some(u => u.nickname === nickname)) return showAlert('提示', '该昵称已被注册，请换一个');
+
+        const newUser = {
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
+            nickname, pwd, gender: '未知',
+            wxid: genWxId(),
+            avatar: tempAvatarBase64 || DEFAULT_AVATAR,
+            friends: [],
+            isVip: false 
+        };
+        
+        users.push(newUser);
+        saveUsers(users);
+        showAlert('注册成功', '请登录');
+        $('switch-auth').click(); 
+        $('auth-nickname').value = nickname;
+        $('auth-pwd').value = pwd;
+    }
+};
+
+function loginSuccess(user) {
+    currentUser = user;
+    switchPage('main-page');
+    renderMainPage();
+}
+
+$('btn-logout').onclick = () => {
+    currentUser = null;
+    switchPage('auth-page');
+    $('auth-pwd').value = '';
+};
+
+// ================= VIP 逻辑 =================
+$('open-vip-btn').onclick = () => {
+    if (currentUser.isVip) return showAlert('提示', '您已经是尊贵的VIP用户了');
+    $('vip-modal').classList.add('active');
+    $('vip-code').value = '';
+};
+$('vip-cancel').onclick = () => $('vip-modal').classList.remove('active');
+$('vip-ok').onclick = () => {
+    if ($('vip-code').value === '123456') {
+        let users = usersDB();
+        let me = users.find(u => u.id === currentUser.id);
+        me.isVip = true;
+        saveUsers(users);
+        currentUser = me;
+        $('vip-modal').classList.remove('active');
+        showAlert('恭喜', '成功开通 VIP 会员！');
+        renderMainPage();
+    } else {
+        showAlert('错误', '卡密不正确');
+    }
+};
+
+// 生成名字 + 徽章
+function getNameHtml(user) {
+    if (user.isVip) {
+        return `<span class="vip-name-text">${user.nickname}</span><span class="vip-badge"><span class="vip-badge-text">VIP用户</span></span>`;
+    }
+    return `<span>${user.nickname}</span>`;
+}
+
+// ================= 主界面渲染 =================
+function renderMainPage() {
+    if(!currentUser) return;
+    $('my-avatar').src = currentUser.avatar || DEFAULT_AVATAR;
+    
+    const nameBox = $('my-nickname');
+    nameBox.innerHTML = getNameHtml(currentUser);
+    $('my-wxid').textContent = '微信号: ' + currentUser.wxid;
+
+    renderChatList();
+    renderContacts();
+}
+
+function renderChatList() {
+    const container = $('tab-chats');
+    container.innerHTML = '';
+    const chats = chatsDB();
+    
+    if(currentUser.friends.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:40px; color:#999;">暂无聊天，去通讯录加好友吧</div>';
+        return;
+    }
+
+    currentUser.friends.forEach(fId => {
+        const friend = getFriendInfo(fId);
+        const chatKey = [currentUser.id, friend.id].sort().join('_');
+        const msgs = chats[chatKey] || [];
+        const lastMsg = msgs.length > 0 ? msgs[msgs.length - 1] : null;
+        
+        const div = document.createElement('div');
+        div.className = 'chat-item';
+        div.onclick = () => openChat(friend);
+        
+        let lastMsgText = lastMsg ? (lastMsg.type === 'image' ? '[图片]' : lastMsg.text) : '暂无消息';
+
+        const img = document.createElement('img');
+        img.className = 'chat-avatar';
+        img.src = friend.avatar;
+        img.onerror = () => img.src = DEFAULT_AVATAR;
+
+        const info = document.createElement('div');
+        info.className = 'chat-info';
+        
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'chat-name';
+        nameDiv.innerHTML = getNameHtml(friend); 
+
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'chat-msg';
+        msgDiv.textContent = lastMsgText;
+
+        info.appendChild(nameDiv);
+        info.appendChild(msgDiv);
+        div.appendChild(img);
+        div.appendChild(info);
+        container.appendChild(div);
+    });
+}
+function renderContacts() {
+    const container = $('tab-contacts');
+    container.innerHTML = '';
+    currentUser.friends.forEach(fId => {
+        const friend = getFriendInfo(fId);
+        const div = document.createElement('div');
+        div.className = 'chat-item';
+        div.onclick = () => openChat(friend);
+        
+        const img = document.createElement('img');
+        img.className = 'chat-avatar';
+        img.src = friend.avatar;
+        img.onerror = () => img.src = DEFAULT_AVATAR;
+
+        const info = document.createElement('div');
+        info.className = 'chat-info';
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'chat-name';
+        nameDiv.innerHTML = getNameHtml(friend);
+
+        info.appendChild(nameDiv);
+        div.appendChild(img);
+        div.appendChild(info);
+        container.appendChild(div);
+    });
+}
+
+document.querySelectorAll('.tab-item').forEach(tab => {
+    tab.onclick = () => {
+        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        $('tab-' + tab.dataset.tab).classList.add('active');
+    };
+});
+
+// ================= 搜索页 =================
+$('btn-to-search').onclick = () => {
+    switchPage('search-page');
+    $('search-results').innerHTML = '';
+    $('search-input').value = '';
+};
+$('search-back').onclick = () => switchPage('main-page');
+
+function renderSearchResult(u, isOnline = true) {
+    const container = $('search-results');
+    if (document.getElementById('res_' + u.id)) return;
+
+    const div = document.createElement('div');
+    div.className = 'user-card';
+    div.id = 'res_' + u.id;
+    
+    const isMe = u.id === currentUser.id;
+    const isFriend = currentUser.friends.includes(u.id);
+
+    const img = document.createElement('img');
+    img.className = 'chat-avatar';
+    img.src = u.avatar;
+    img.onerror = () => img.src = DEFAULT_AVATAR;
+
+    const info = document.createElement('div');
+    info.className = 'chat-info';
+    
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'chat-name';
+    nameDiv.innerHTML = getNameHtml(u);
+    if (isOnline) {
+        const span = document.createElement('span');
+        span.style.cssText = 'font-size:10px;color:#07c160;margin-left:5px;font-weight:normal;';
+        span.textContent = '[在线]';
+        nameDiv.appendChild(span);
+    }
+
+    const wxidDiv = document.createElement('div');
+    wxidDiv.className = 'chat-msg';
+    wxidDiv.textContent = '微信号: ' + u.wxid;
+
+    info.appendChild(nameDiv);
+    info.appendChild(wxidDiv);
+
+    const btnBox = document.createElement('div');
+    if (isMe) {
+        btnBox.innerHTML = `<span style="color:#ff5722; font-size:14px;">这是你自己</span>`;
+    } else if (isFriend) {
+        btnBox.innerHTML = `<span style="color:#888; font-size:14px;">已是好友</span>`;
+    } else {
+        const btn = document.createElement('button');
+        btn.className = 'add-btn';
+        btn.textContent = '添加';
+        btn.onclick = () => sendFriendRequest(u.id);
+        btnBox.appendChild(btn);
+    }
+
+    div.appendChild(img);
+    div.appendChild(info);
+    div.appendChild(btnBox);
+    container.appendChild(div);
+}
+
+$('search-btn').onclick = () => {
+    const kw = $('search-input').value.trim().toLowerCase();
+    if (!kw) return;
+    
+    $('search-results').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">正在全网搜索中...</div>';
+    
+    const localUsers = usersDB().filter(u => u.wxid.toLowerCase().includes(kw) || u.nickname.toLowerCase().includes(kw));
+    localUsers.forEach(u => renderSearchResult(u));
+
+    if (client && isMqttConnected) {
+        client.publish(TOPIC, JSON.stringify({ type: 'search_req', keyword: kw, fromId: currentUser.id }));
+    }
+    
+    setTimeout(() => {
+        if ($('search-results').children.length === 0) {
+            $('search-results').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">未找到该用户</div>';
+        }
+    }, 1000);
+};
+
+window.sendFriendRequest = (toId) => {
+    if (!client || !isMqttConnected) return showAlert('提示', '网络未连接');
+    client.publish(TOPIC, JSON.stringify({
+        type: 'friend_req',
+        toId: toId,
+        fromId: currentUser.id,
+        fromUser: currentUser
+    }));
+    showAlert('提示', '申请已发出，等待对方同意');
+};
+$('req-reject').onclick = () => {
+    $('req-modal').classList.remove('active');
+    pendingReq = null;
+};
+
+$('req-accept').onclick = () => {
+    if(pendingReq) {
+        let users = usersDB();
+        let me = users.find(u => u.id === currentUser.id);
+        if (!me.friends.includes(pendingReq.fromId)) {
+            me.friends.push(pendingReq.fromId);
+            saveUsers(users);
+            currentUser = me;
+        }
+        onlineUsers[pendingReq.fromUser.id] = pendingReq.fromUser;
+        
+        client.publish(TOPIC, JSON.stringify({
+            type: 'friend_accept',
+            toId: pendingReq.fromId,
+            fromId: currentUser.id,
+            fromUser: currentUser
+        }));
+        
+        renderMainPage();
+        showAlert('提示', '已添加为好友');
+    }
+    $('req-modal').classList.remove('active');
+    pendingReq = null;
+};
+
+// ================= 聊天逻辑 =================
+function openChat(friend, isRefresh = false) {
+    currentChatId = friend.id;
+    $('chat-title').innerHTML = getNameHtml(friend);
+    if (!isRefresh) switchPage('chat-page');
+    
+    const chats = chatsDB();
+    const chatKey = [currentUser.id, friend.id].sort().join('_');
+    const msgs = chats[chatKey] || [];
+    const area = $('chat-msg-area');
+    area.innerHTML = '';
+
+    msgs.forEach(m => {
+        const isMe = m.senderId === currentUser.id;
+        const row = document.createElement('div');
+        row.className = `msg-row ${isMe ? 'me' : 'them'}`;
+        
+        const avatar = isMe ? currentUser.avatar : friend.avatar;
+        
+        const img = document.createElement('img');
+        img.className = 'msg-avatar';
+        img.src = avatar;
+        img.onerror = () => img.src = DEFAULT_AVATAR;
+
+        if (isMe && m.error) {
+            const err = document.createElement('span');
+            err.className = 'msg-error';
+            err.textContent = '❗';
+            row.appendChild(err);
+        }
+
+        const bubble = document.createElement('div');
+        bubble.className = 'msg-bubble';
+        
+        if (m.type === 'image') {
+            bubble.classList.add('is-image');
+            const msgImg = document.createElement('img');
+            msgImg.src = m.text;
+            msgImg.className = 'msg-image';
+            bubble.appendChild(msgImg);
+        } else {
+            bubble.textContent = m.text;
+            if (isMe && currentUser.isVip) {
+                bubble.classList.add('vip-gold');
+            } else if (!isMe && friend.isVip) {
+                bubble.classList.add('vip-gold');
+            }
+        }
+
+        row.appendChild(img);
+        row.appendChild(bubble);
+        area.appendChild(row);
+    });
+    
+    setTimeout(() => { area.scrollTop = area.scrollHeight; }, 50);
+}
+
+$('chat-back').onclick = () => { currentChatId = null; switchPage('main-page'); renderMainPage(); };
+
+$('chat-send').onclick = () => {
+    const text = $('chat-input').value.trim();
+    if (!text) return;
+    sendMessage('text', text);
+    $('chat-input').value = '';
+};
+$('chat-input').onkeydown = (e) => { if (e.key === 'Enter') $('chat-send').click(); };
+
+$('chat-img-input').onchange = (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => { sendMessage('image', ev.target.result); e.target.value = ''; };
+    reader.readAsDataURL(file);
+};
+
+function sendMessage(type, content) {
+    if (!currentChatId) return;
+    
+    const chats = chatsDB();
+    const chatKey = [currentUser.id, currentChatId].sort().join('_');
+    if (!chats[chatKey]) chats[chatKey] = [];
+    chats[chatKey].push({ senderId: currentUser.id, type, text: content, time: Date.now(), error: false });
+    saveChats(chats);
+    openChat(getFriendInfo(currentChatId), true);
+
+    if (client && isMqttConnected) {
+        client.publish(TOPIC, JSON.stringify({
+            type: 'msg',
+            toId: currentChatId,
+            fromId: currentUser.id,
+            fromUser: currentUser,
+            msgType: type,
+            content: content
+        }));
+    } else {
+        chats[chatKey][chats[chatKey].length - 1].error = true;
+        saveChats(chats);
+        openChat(getFriendInfo(currentChatId), true);
+    }
+    renderMainPage();
+}
+
+// ================= 底部菜单 =================
+$('chat-menu').onclick = () => {
+    if(!currentChatId) return;
+    $('action-menu').classList.add('active');
+};
+
+$('menu-cancel').onclick = () => {
+    $('action-menu').classList.remove('active');
+};
+
+$('menu-blacklist').onclick = () => {
+    let users = usersDB();
+    let me = users.find(u => u.id === currentUser.id);
+    if(!me.blacklist) me.blacklist = [];
+    if(!me.blacklist.includes(currentChatId)) {
+        me.blacklist.push(currentChatId);
+        saveUsers(users);
+        currentUser = me;
+        showAlert('已拉黑', '对方将无法再给你发送消息');
+    } else {
+        showAlert('提示', '对方已经在你的黑名单中');
+    }
+    $('action-menu').classList.remove('active');
+};
+
+$('menu-delete').onclick = () => {
+    if(confirm('确定删除该好友吗？')){
+        let users = usersDB();
+        let me = users.find(u => u.id === currentUser.id);
+        let him = users.find(u => u.id === currentChatId);
+        
+        me.friends = me.friends.filter(id => id !== him.id);
+        if(him) him.friends = him.friends.filter(id => id !== me.id);
+        
+        saveUsers(users);
+        currentUser = me;
+        $('action-menu').classList.remove('active');
+        $('chat-back').click();
+    }
+};
+</script>
+</body>
+</html>
