@@ -94,7 +94,7 @@
     #actionMenuBg { position: absolute; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; opacity: 0; pointer-events: none; transition: 0.3s; }
     #actionMenuBg.show { opacity: 1; pointer-events: auto; }
 
-    /* ================= 全新绝美公告弹窗 UI ================= */
+    /* 绝美公告弹窗 UI */
     .notice-modal-mask {
         position: fixed; inset: 0; z-index: 9000;
         background: rgba(0, 0, 0, 0.6);
@@ -103,69 +103,19 @@
         opacity: 0; transition: opacity 0.3s;
     }
     .notice-modal-mask.show { display: flex; opacity: 1; }
-    
-    .notice-card {
-        background: #fff; width: 85%; max-width: 320px;
-        border-radius: 20px; overflow: hidden;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-        transform: translateY(30px) scale(0.95);
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        display: flex; flex-direction: column;
-    }
-    .notice-modal-mask.show .notice-card {
-        transform: translateY(0) scale(1);
-    }
-
-    .notice-header {
-        background: linear-gradient(135deg, #12b7f5, #0e9cdb);
-        padding: 25px 20px 20px;
-        text-align: center; position: relative;
-    }
-    .notice-icon {
-        width: 50px; height: 50px;
-        background: rgba(255,255,255,0.2);
-        border-radius: 50%;
-        display: flex; justify-content: center; align-items: center;
-        margin: 0 auto 10px; font-size: 26px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        border: 1px solid rgba(255,255,255,0.3);
-    }
-    .notice-title {
-        color: #fff; font-size: 18px; font-weight: bold; letter-spacing: 1px;
-    }
-
-    .notice-body {
-        padding: 25px 20px;
-        font-size: 15px; color: #444; line-height: 1.6;
-        max-height: 40vh; overflow-y: auto;
-        white-space: pre-wrap; word-break: break-word;
-    }
-
-    .notice-footer {
-        padding: 15px 20px 20px;
-    }
-    .notice-btn-main {
-        width: 100%; padding: 14px;
-        border: none; border-radius: 12px;
-        background: linear-gradient(135deg, #12b7f5, #0e9cdb);
-        color: #fff; font-size: 16px; font-weight: bold;
-        cursor: pointer; letter-spacing: 1px;
-        box-shadow: 0 4px 15px rgba(18, 183, 245, 0.4);
-        transition: transform 0.1s;
-    }
+    .notice-card { background: #fff; width: 85%; max-width: 320px; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.2); transform: translateY(30px) scale(0.95); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; }
+    .notice-modal-mask.show .notice-card { transform: translateY(0) scale(1); }
+    .notice-header { background: linear-gradient(135deg, #12b7f5, #0e9cdb); padding: 25px 20px 20px; text-align: center; position: relative; }
+    .notice-icon { width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 10px; font-size: 26px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.3); }
+    .notice-title { color: #fff; font-size: 18px; font-weight: bold; letter-spacing: 1px; }
+    .notice-body { padding: 25px 20px; font-size: 15px; color: #444; line-height: 1.6; max-height: 40vh; overflow-y: auto; white-space: pre-wrap; word-break: break-word; }
+    .notice-footer { padding: 15px 20px 20px; }
+    .notice-btn-main { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, #12b7f5, #0e9cdb); color: #fff; font-size: 16px; font-weight: bold; cursor: pointer; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(18, 183, 245, 0.4); transition: transform 0.1s; }
     .notice-btn-main:active { transform: scale(0.96); }
-    
-    .notice-btn-update {
-        background: linear-gradient(135deg, #ff416c, #ff4b2b);
-        box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
-    }
+    .notice-btn-update { background: linear-gradient(135deg, #ff416c, #ff4b2b); box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4); }
 
     /* 封禁/停服极限遮罩 */
-    .system-block-screen {
-        position: fixed; inset: 0; z-index: 2147483647; background: #000; color: #fff;
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-        text-align: center; padding: 30px; pointer-events: all; user-select: none;
-    }
+    .system-block-screen { position: fixed; inset: 0; z-index: 2147483647; background: #000; color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 30px; pointer-events: all; user-select: none; }
     .ban-icon { font-size: 60px; color: #ff4757; margin-bottom: 20px; animation: pulse 1.5s infinite; }
     .ban-title { font-size: 24px; font-weight: 900; color: #ff4757; margin-bottom: 15px; letter-spacing: 2px; }
     .ban-content { font-size: 16px; line-height: 1.6; color: #ccc; max-width: 500px; margin-bottom: 30px; }
@@ -295,26 +245,21 @@
     </div>
 </div>
 
-<!-- ================= 绝美远程公告弹窗 ================= -->
+<!-- 绝美远程公告弹窗 -->
 <div class="notice-modal-mask" id="noticeModal">
     <div class="notice-card">
         <div class="notice-header">
             <div class="notice-icon" id="noticeIcon">📢</div>
             <div class="notice-title" id="noticeTitle">系统公告</div>
         </div>
-        <div class="notice-body" id="noticeContent">
-            公告内容加载中...
-        </div>
-        <div class="notice-footer" id="noticeBtns">
-            <!-- 按钮由JS动态生成 -->
-        </div>
+        <div class="notice-body" id="noticeContent"></div>
+        <div class="notice-footer" id="noticeBtns"></div>
     </div>
 </div>
 
 <script>
-/* ================= 核心变量 ================= */
-const BROKER = 'wss://broker.emqx.io:8084/mqtt';
-const TOPIC_GLOBAL = 'qq_clone_global_v999';
+    const BROKER = 'wss://broker.emqx.io:8084/mqtt';
+const TOPIC_GLOBAL = 'qq_clone_global_v999'; // 聊天与搜索
 const TOPIC_NOTICE = 'qq_clone_notice_channel_888';
 const TOPIC_SYS = 'qq_clone_system_status_v1';
 
@@ -337,7 +282,7 @@ let isSystemBlocked = false;
 
 window.onload = () => { initMQTT(); if (currentUser) enterMain(); };
 
-/* ================= 封禁与停服极端阻断 ================= */
+/* ================= 封禁与停服阻断 ================= */
 function blockSystem(type, reason) {
     if (isSystemBlocked) return;
     isSystemBlocked = true;
@@ -367,37 +312,70 @@ function checkSystemStatus() {
         }
     }
 }
+
+/* ================= 超级稳定的 MQTT 通信 ================= */
 function initMQTT() {
     client = mqtt.connect(BROKER);
     client.on('connect', () => {
-        client.subscribe(TOPIC_GLOBAL); client.subscribe(TOPIC_NOTICE); client.subscribe(TOPIC_SYS);
+        client.subscribe(TOPIC_GLOBAL); 
+        client.subscribe(TOPIC_NOTICE); 
+        client.subscribe(TOPIC_SYS);
+
         if(currentUser) {
             const myInfo = { name: currentUser.name, id: currentUser.id, official: currentUser.official, leopard: currentUser.leopard };
+            // 上线立刻广播名片
             client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'online', user: myInfo }));
+            
+            // 心跳广播，每隔10秒广播一次自己，确保全服都有你的缓存
+            setInterval(() => {
+                client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'online', user: myInfo }));
+            }, 10000);
         }
     });
 
     client.on('message', (topic, msg) => {
         try {
             const data = JSON.parse(msg.toString());
+            
+            // 系统封禁/停服
             if (topic === TOPIC_SYS) { sysData = data; checkSystemStatus(); return; }
+            // 远程公告
             if (topic === TOPIC_NOTICE) { handleRemoteNotice(data); return; }
-            if (data.type === 'check_name' && currentUser && data.name === currentUser.name) {
-                client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'name_exists', reqId: data.reqId })); return;
+            
+            // ================= 核心：全网用户信息收集 =================
+            if (data.type === 'online' || data.type === 'register' || data.type === 'info_update') {
+                // 把收到的任何人存进本地数据库
+                globalUsers[data.user.id] = data.user;
+                saveData();
+                return; 
             }
-            if (data.type === 'online' || data.type === 'register') { globalUsers[data.user.id] = data.user; saveData(); return; }
-            if(data.type === 'info_update'){ globalUsers[data.user.id] = data.user; saveData(); return; }
-            if (currentUser && data.senderId === currentUser.id) return;
 
+            // 重名拦截
+            if (data.type === 'check_name' && currentUser && data.name === currentUser.name) {
+                client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'name_exists', reqId: data.reqId })); 
+                return;
+            }
+
+            // 搜索请求与响应
             if (data.type === 'search_req' && currentUser) {
+                // 如果有人搜我，我不仅要广播自己的消息，还要针对该请求回复
                 if (data.keyword === currentUser.name || data.keyword === currentUser.id) {
-                    client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'search_res', reqId: data.reqId, user: { name: currentUser.name, id: currentUser.id, official: currentUser.official, leopard: currentUser.leopard } }));
+                    client.publish(TOPIC_GLOBAL, JSON.stringify({ 
+                        type: 'search_res', reqId: data.reqId, user: { name: currentUser.name, id: currentUser.id, official: currentUser.official, leopard: currentUser.leopard } 
+                    }));
                 }
-            } else if (data.type === 'search_res' && data.reqId === searchReqId) {
-                globalUsers[data.user.id] = data.user; saveData(); renderSearchResult([data.user]); searchReqId = null; 
-            } else if (data.type === 'chat' && currentUser && data.toName === currentUser.name) {
+            } 
+            else if (data.type === 'search_res' && data.reqId === searchReqId) {
+                globalUsers[data.user.id] = data.user; saveData(); 
+                renderSearchResult([data.user]); 
+                searchReqId = null; // 找到了就不等了
+            }
+            // 聊天
+            else if (data.type === 'chat' && currentUser && data.toName === currentUser.name) {
                 receiveMessage(data.fromName, data.text);
-            } else if (data.type === 'add_friend' && currentUser && data.toName === currentUser.name) {
+            }
+            // 加好友逻辑
+            else if (data.type === 'add_friend' && currentUser && data.toName === currentUser.name) {
                 const fromUser = data.fromUser;
                 if (!friends.find(f => f.name === fromUser.name)) {
                     friends.push({ id: fromUser.id, name: fromUser.name, official: fromUser.official, leopard: fromUser.leopard });
@@ -405,16 +383,19 @@ function initMQTT() {
                     client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'friend_ok', targetName: fromUser.name, myUser: currentUser }));
                     alert(`📢 ${fromUser.name} 已添加你为好友！`);
                 }
-            } else if (data.type === 'friend_ok' && currentUser && data.targetName === currentUser.name) {
+            }
+            else if (data.type === 'friend_ok' && currentUser && data.targetName === currentUser.name) {
                 const myUser = data.myUser;
                 if (!friends.find(f => f.name === myUser.name)) {
                     friends.push({ id: myUser.id, name: myUser.name, official: myUser.official, leopard: myUser.leopard });
                     saveData(); renderChats(); renderContacts();
                     alert(`✅ ${myUser.name} 已通过你的好友请求！`);
                 }
-            } else if (data.type === 'moment') {
-                moments.unshift(data.moment); renderMoments(); saveData();
-            } else if (data.type === 'leopard_update') { leopardSlots = data.slots; }
+            }
+            // 动态、豹子号
+            else if (data.type === 'moment') { moments.unshift(data.moment); renderMoments(); saveData(); }
+            else if (data.type === 'leopard_update') { leopardSlots = data.slots; }
+            
         } catch(e) {}
     });
 }
@@ -464,15 +445,14 @@ function handleRemoteNotice(data) {
     content.innerText = data.content;
 
     if (data.type === 'update') {
-        icon.innerText = '🚀'; // 更新图标
+        icon.innerText = '🚀'; 
         icon.style.background = 'rgba(255,65,108,0.2)';
         btnBox.innerHTML = `<button class="notice-btn-main notice-btn-update" onclick="window.open('${data.url}', '_blank'); closeNotice('${hash}')">立即前往更新</button>`;
     } else {
-        icon.innerText = '📢'; // 普通公告图标
+        icon.innerText = '📢'; 
         icon.style.background = 'rgba(255,255,255,0.2)';
         btnBox.innerHTML = `<button class="notice-btn-main" onclick="closeNotice('${hash}')">我知道了</button>`;
     }
-
     modal.classList.add('show');
 }
 
@@ -480,8 +460,54 @@ function closeNotice(hash) {
     localStorage.setItem('last_read_notice', hash);
     document.getElementById('noticeModal').classList.remove('show');
 }
+function doSearch() {
+    const kw = document.getElementById('searchInput').value.trim(); 
+    if (!kw) return;
+    const box = document.getElementById('searchResultBox'); 
+    box.innerHTML = '<div style="text-align:center; padding:10px; color:#12b7f5;">正在全网搜索玩家...</div>';
+    
+    // 1. 先从本地缓存（心跳广播收集来的数据）里找
+    let localResults = [];
+    for (let id in globalUsers) { 
+        if (globalUsers[id].name === kw || globalUsers[id].id === kw) localResults.push(globalUsers[id]); 
+    }
+    
+    if (localResults.length > 0) {
+        // 缓存命中，秒出结果
+        renderSearchResult(localResults);
+    } else {
+        // 2. 缓存没命中，发送全网广播求答
+        searchReqId = 's_' + Date.now();
+        client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'search_req', keyword: kw, reqId: searchReqId }));
+        
+        // 1.5 秒内如果没人回应，提示找不到
+        setTimeout(() => { 
+            if (searchReqId) { 
+                box.innerHTML = '<div style="text-align:center; color:#f66; padding:10px;">未找到该玩家，请确保对方已打开过此网页</div>'; 
+                searchReqId = null; 
+            } 
+        }, 1500);
+    }
+}
 
-/* ================= 其他 UI 逻辑 ================= */
+function renderSearchResult(users) {
+    const box = document.getElementById('searchResultBox'); box.innerHTML = '';
+    users.forEach(u => {
+        if (u.id === currentUser.id) { box.innerHTML += `<div style="text-align:center; color:#999; padding:10px;">这是你自己哦</div>`; return; }
+        const isFriend = friends.find(f => f.id === u.id);
+        const div = document.createElement('div'); div.className = 'search-item';
+        div.style = "display:flex; justify-content:space-between; align-items:center; padding:10px; background:#f9f9f9; border-radius:8px; margin-top:10px;";
+        div.innerHTML = `<div><b>${u.name}</b> ${getSpecialTags(u)}<br><span style="font-size:12px;color:#999;">QQ: ${u.id}</span></div><button class="btn" style="padding:6px 12px;font-size:13px;" onclick="sendAddFriend('${u.name}', this)" ${isFriend?'disabled':''}>${isFriend?'已添加':'加好友'}</button>`;
+        box.appendChild(div);
+    });
+}
+
+function sendAddFriend(targetName, btn) { 
+    btn.innerText = '已发送'; btn.disabled = true; btn.style.background = '#e0e0e0'; 
+    client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'add_friend', toName: targetName, fromUser: currentUser })); 
+}
+
+/* ================= 其余常规 UI 逻辑 ================= */
 function getSpecialTags(user) {
     let html = '';
     if (user.leopard) html += `<span class="leopard-tag">${user.leopard}</span>`;
@@ -543,6 +569,7 @@ function receiveMessage(fromName, text) {
         renderChats();
     }
 }
+
 function toggleAuth() { isLoginMode = !isLoginMode; document.getElementById('authTitle').innerText = isLoginMode ? 'QQ 登录' : 'QQ 注册'; document.getElementById('authBtn').innerText = isLoginMode ? '登 录' : '注 册'; document.getElementById('authSwitch').innerText = isLoginMode ? '没有账号？去注册' : '已有账号？去登录'; }
 function openDrawer() { document.getElementById('drawer').classList.add('show'); document.getElementById('drawerBg').classList.add('show'); }
 function closeDrawer() { document.getElementById('drawer').classList.remove('show'); document.getElementById('drawerBg').classList.remove('show'); }
@@ -550,30 +577,6 @@ function openActionMenu() { document.getElementById('actionMenuBg').classList.ad
 function closeActionMenu() { document.getElementById('actionMenuBg').classList.remove('show'); document.getElementById('actionMenu').classList.remove('show'); }
 function openSearchModal() { closeActionMenu(); document.getElementById('searchInput').value=''; document.getElementById('searchResultBox').innerHTML=''; document.getElementById('searchModal').classList.add('show'); }
 function closeSearchModal() { document.getElementById('searchModal').classList.remove('show'); }
-function doSearch() {
-    const kw = document.getElementById('searchInput').value.trim(); if (!kw) return;
-    const box = document.getElementById('searchResultBox'); box.innerHTML = '<div style="text-align:center; padding:10px; color:#12b7f5;">全网搜索中...</div>';
-    let localResults = [];
-    for (let id in globalUsers) { if (globalUsers[id].name === kw || globalUsers[id].id === kw) localResults.push(globalUsers[id]); }
-    if (localResults.length > 0) renderSearchResult(localResults);
-    else {
-        searchReqId = 's_' + Date.now();
-        client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'search_req', keyword: kw, reqId: searchReqId }));
-        setTimeout(() => { if (searchReqId) { box.innerHTML = '<div style="text-align:center; color:#f66; padding:10px;">未找到该玩家</div>'; searchReqId = null; } }, 800);
-    }
-}
-function renderSearchResult(users) {
-    const box = document.getElementById('searchResultBox'); box.innerHTML = '';
-    users.forEach(u => {
-        if (u.id === currentUser.id) { box.innerHTML += `<div style="text-align:center; color:#999; padding:10px;">这是你自己哦</div>`; return; }
-        const isFriend = friends.find(f => f.id === u.id);
-        const div = document.createElement('div'); div.className = 'search-item';
-        div.style = "display:flex; justify-content:space-between; align-items:center; padding:10px; background:#f9f9f9; border-radius:8px; margin-top:10px;";
-        div.innerHTML = `<div><b>${u.name}</b> ${getSpecialTags(u)}<br><span style="font-size:12px;color:#999;">QQ: ${u.id}</span></div><button class="btn" style="padding:6px 12px;font-size:13px;" onclick="sendAddFriend('${u.name}', this)" ${isFriend?'disabled':''}>${isFriend?'已添加':'加好友'}</button>`;
-        box.appendChild(div);
-    });
-}
-function sendAddFriend(targetName, btn) { btn.innerText = '已发送'; btn.disabled = true; btn.style.background = '#e0e0e0'; client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'add_friend', toName: targetName, fromUser: currentUser })); }
 function showPostMomentDialog() { closeActionMenu(); showModal("发布动态", "分享你的新鲜事", true, (text) => { if (!text) return; const moment = { sender: currentUser.name, official: currentUser.official, text: text, time: new Date().toLocaleTimeString() }; moments.unshift(moment); renderMoments(); saveData(); client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'moment', moment: moment })); }, "说点什么..."); }
 function renderMoments() { const box = document.getElementById('momentsList'); box.innerHTML = ''; moments.forEach(m => { box.innerHTML += `<div style="background:#fff; padding:15px; margin-bottom:10px;"><b>${m.sender}</b> ${m.official?'<span class="official-icon">V</span>':''}<p style="margin-top:10px;font-size:15px;">${m.text}</p></div>`; }); }
 function openLeopardMenu() { document.getElementById('leopardModal').classList.add('show'); const list = document.getElementById('lpList'); list.innerHTML=''; for(let num in leopardSlots) { list.innerHTML += `<div style="padding:10px;border-bottom:1px solid #eee;cursor:pointer;" onclick="claimLeopard('${num}')">${num} (剩余${2-leopardSlots[num].length})</div>`; } }
