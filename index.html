@@ -6,13 +6,16 @@
 <title>QQ Clone Pro</title>
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, "PingFang SC", sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { width: 100vw; height: 100vh; background: #f2f2f2; overflow: hidden; color: #333; }
     
+    /* 完美适配电脑和手机的居中布局 */
+    html, body { height: 100%; background: #333; display: flex; justify-content: center; align-items: center; }
+    #app-container { position: relative; width: 100vw; max-width: 420px; height: 100vh; max-height: 900px; background: #f2f2f2; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
+    @media (max-width: 420px) { #app-container { max-height: none; box-shadow: none; } }
+
     .page { position: absolute; inset: 0; background: #fff; display: flex; flex-direction: column; z-index: 10; transition: transform 0.3s; }
     .hide { display: none !important; }
     .btn { background: #12b7f5; color: #fff; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; }
     .btn:active { background: #0e9cdb; }
-    .btn-gray { background: #e0e0e0; color: #666; }
     input, textarea { outline: none; width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; }
 
     /* 登录注册 */
@@ -24,7 +27,7 @@
 
     /* 主框架 */
     #mainPage { z-index: 1; }
-    header { height: 55px; background: #12b7f5; display: flex; align-items: center; padding: 0 15px; color: #fff; justify-content: space-between; padding-top: env(safe-area-inset-top); }
+    header { height: 55px; background: #12b7f5; display: flex; align-items: center; padding: 0 15px; color: #fff; justify-content: space-between; padding-top: env(safe-area-inset-top); flex-shrink: 0; }
     .header-left { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: bold; }
     .avatar-btn { width: 32px; height: 32px; border-radius: 50%; background: #fff; color: #12b7f5; display: flex; justify-content: center; align-items: center; font-weight: bold; cursor: pointer; font-size: 16px; }
     .add-btn { font-size: 26px; cursor: pointer; }
@@ -40,7 +43,8 @@
     .list-name { font-size: 16px; font-weight: 500; display: flex; align-items: center; }
     .list-msg { font-size: 13px; color: #999; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    nav { position: absolute; bottom: 0; width: 100%; height: 60px; background: #fff; display: flex; border-top: 1px solid #eee; padding-bottom: env(safe-area-inset-bottom); z-index: 2; }
+    /* 底部导航 */
+    nav { position: absolute; bottom: 0; width: 100%; height: 60px; background: #fff; display: flex; border-top: 1px solid #eee; padding-bottom: env(safe-area-inset-bottom); z-index: 2; flex-shrink: 0; }
     .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; font-size: 10px; cursor: pointer; }
     .nav-item.active { color: #12b7f5; }
     .nav-icon { font-size: 22px; margin-bottom: 2px; }
@@ -58,7 +62,7 @@
     /* 聊天窗口 */
     #chatPage { z-index: 30; transform: translateX(100%); background: #f2f2f2; }
     #chatPage.show { transform: translateX(0); }
-    #chatHeader { background: #12b7f5; color: #fff; text-align: center; padding: 0 15px; height: 55px; display: flex; align-items: center; position: relative; padding-top: env(safe-area-inset-top);}
+    #chatHeader { background: #12b7f5; color: #fff; text-align: center; padding: 0 15px; height: 55px; display: flex; align-items: center; position: relative; padding-top: env(safe-area-inset-top); flex-shrink: 0;}
     .back-btn { position: absolute; left: 15px; font-size: 24px; cursor: pointer; }
     #chatName { flex: 1; font-size: 17px; font-weight: bold; }
     #chatMessages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; }
@@ -67,7 +71,7 @@
     .msg-bubble { padding: 10px 14px; border-radius: 12px; font-size: 15px; line-height: 1.4; word-break: break-word; }
     .msg-row.them .msg-bubble { background: #fff; }
     .msg-row.me .msg-bubble { background: #12b7f5; color: #fff; }
-    #chatInputArea { padding: 10px; background: #fff; display: flex; gap: 10px; padding-bottom: env(safe-area-inset-bottom);}
+    #chatInputArea { padding: 10px; background: #fff; display: flex; gap: 10px; padding-bottom: env(safe-area-inset-bottom); flex-shrink: 0;}
     #chatInput { flex: 1; border: 1px solid #eee; background: #f9f9f9; border-radius: 20px; padding: 10px 15px; }
     .send-btn { background: #12b7f5; color: #fff; border: none; border-radius: 20px; padding: 0 20px; font-weight: bold; }
 
@@ -75,11 +79,12 @@
     .leopard-tag { display: inline-block; padding: 2px 6px; border-radius: 10px; font-size: 10px; color: #fff; margin-left: 5px; font-weight: bold; transform: scale(0.9); background: linear-gradient(90deg, #ff416c, #ff4b2b); }
     .official-icon { display: inline-block; width: 16px; height: 16px; background: #ffd700; color: #fff; border-radius: 50%; font-size: 10px; text-align: center; line-height: 16px; margin-left: 4px; font-weight: bold; }
 
-    /* 通用弹窗 */
+    /* 通用弹窗 (修复错位问题) */
     .modal { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; justify-content: center; align-items: center; }
     .modal.show { display: flex; }
-    .modal-box { background: #fff; width: 85%; max-width: 320px; border-radius: 12px; padding: 20px; text-align: center; }
-    .modal-box h3 { margin-bottom: 10px; font-size: 18px; }
+    .modal-box { background: #fff; width: 85%; max-width: 320px; border-radius: 12px; padding: 20px; text-align: center; animation: pop 0.2s; }
+    @keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-box h3 { margin-bottom: 10px; font-size: 18px; color: #333;}
     .modal-box p { font-size: 14px; color: #666; margin-bottom: 15px; }
     .modal-box input { margin-bottom: 15px; }
     .modal-btns { display: flex; gap: 10px; }
@@ -87,179 +92,188 @@
     .btn-ok { background: #12b7f5; color: #fff; }
     .btn-cancel { background: #f0f0f0; color: #666; }
 
-    /* 操作菜单 */
+    /* 底部操作菜单 (修复一直显示的问题) */
     #actionMenu { position: absolute; bottom: -100%; left: 0; width: 100%; background: #fff; z-index: 101; transition: bottom 0.3s; padding-bottom: env(safe-area-inset-bottom);}
     #actionMenu.show { bottom: 0; }
     .action-btn { padding: 18px; text-align: center; font-size: 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
     #actionMenuBg { position: absolute; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; opacity: 0; pointer-events: none; transition: 0.3s; }
     #actionMenuBg.show { opacity: 1; pointer-events: auto; }
 
-    /* 绝美公告弹窗 UI */
-    .notice-modal-mask {
-        position: fixed; inset: 0; z-index: 9000;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-        display: none; justify-content: center; align-items: center;
-        opacity: 0; transition: opacity 0.3s;
-    }
-    .notice-modal-mask.show { display: flex; opacity: 1; }
-    .notice-card { background: #fff; width: 85%; max-width: 320px; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.2); transform: translateY(30px) scale(0.95); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; }
-    .notice-modal-mask.show .notice-card { transform: translateY(0) scale(1); }
-    .notice-header { background: linear-gradient(135deg, #12b7f5, #0e9cdb); padding: 25px 20px 20px; text-align: center; position: relative; }
-    .notice-icon { width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 10px; font-size: 26px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.3); }
-    .notice-title { color: #fff; font-size: 18px; font-weight: bold; letter-spacing: 1px; }
-    .notice-body { padding: 25px 20px; font-size: 15px; color: #444; line-height: 1.6; max-height: 40vh; overflow-y: auto; white-space: pre-wrap; word-break: break-word; }
-    .notice-footer { padding: 15px 20px 20px; }
-    .notice-btn-main { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, #12b7f5, #0e9cdb); color: #fff; font-size: 16px; font-weight: bold; cursor: pointer; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(18, 183, 245, 0.4); transition: transform 0.1s; }
-    .notice-btn-main:active { transform: scale(0.96); }
-    .notice-btn-update { background: linear-gradient(135deg, #ff416c, #ff4b2b); box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4); }
+    /* 顶栏 Toast 提示 */
+    #toast { position: absolute; top: 15%; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(0,0,0,0.8); color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 14px; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 9999; }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* 封禁/停服极限遮罩 */
-    .system-block-screen { position: fixed; inset: 0; z-index: 2147483647; background: #000; color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 30px; pointer-events: all; user-select: none; }
-    .ban-icon { font-size: 60px; color: #ff4757; margin-bottom: 20px; animation: pulse 1.5s infinite; }
+    /* 绝美公告弹窗 */
+    .notice-modal-mask { position: absolute; inset: 0; z-index: 9000; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; opacity: 0; transition: 0.3s; }
+    .notice-modal-mask.show { display: flex; opacity: 1; }
+    .notice-card { background: #fff; width: 85%; max-width: 320px; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.2); transform: translateY(30px) scale(0.95); transition: 0.4s; display: flex; flex-direction: column; }
+    .notice-modal-mask.show .notice-card { transform: translateY(0) scale(1); }
+    .notice-header { background: linear-gradient(135deg, #12b7f5, #0e9cdb); padding: 25px 20px 20px; text-align: center; }
+    .notice-icon { width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 10px; font-size: 26px; color: #fff; }
+    .notice-title { color: #fff; font-size: 18px; font-weight: bold; }
+    .notice-body { padding: 25px 20px; font-size: 15px; color: #444; line-height: 1.6; max-height: 40vh; overflow-y: auto; white-space: pre-wrap; }
+    .notice-footer { padding: 15px 20px 20px; }
+    .notice-btn-main { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, #12b7f5, #0e9cdb); color: #fff; font-size: 16px; font-weight: bold; cursor: pointer; }
+    .notice-btn-update { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
+     .system-block-screen { position: fixed; inset: 0; z-index: 2147483647; background: #000; color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 30px; pointer-events: all; user-select: none; }
+    .ban-icon { font-size: 60px; color: #ff4757; margin-bottom: 20px; }
     .ban-title { font-size: 24px; font-weight: 900; color: #ff4757; margin-bottom: 15px; letter-spacing: 2px; }
-    .ban-content { font-size: 16px; line-height: 1.6; color: #ccc; max-width: 500px; margin-bottom: 30px; }
+    .ban-content { font-size: 16px; line-height: 1.6; color: #ccc; margin-bottom: 30px; }
     .stop-icon { font-size: 60px; color: #ffa502; margin-bottom: 20px; }
     .stop-title { font-size: 24px; font-weight: 900; color: #ffa502; margin-bottom: 15px; }
-    .fake-btn { padding: 10px 30px; background: #333; border: 1px solid #555; color: #888; border-radius: 20px; cursor: not-allowed; }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); text-shadow: 0 0 20px #ff4757; } 100% { transform: scale(1); } }
 </style>
 <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 </head>
 <body>
 
-<!-- 登录注册 -->
-<div class="page" id="loginPage">
-    <div class="login-box">
-        <h1 id="authTitle">QQ 登录</h1>
-        <div class="input-group"><input type="text" id="authName" placeholder="输入昵称" maxlength="10"></div>
-        <div class="input-group"><input type="password" id="authPwd" placeholder="输入密码"></div>
-        <button class="btn" id="authBtn" onclick="doAuth()" style="width:100%">登 录</button>
-        <div class="switch-auth" id="authSwitch" onclick="toggleAuth()">没有账号？去注册</div>
+<div id="app-container">
+    <!-- 登录注册 -->
+    <div class="page" id="loginPage">
+        <div class="login-box">
+            <h1 id="authTitle">QQ 登录</h1>
+            <div class="input-group"><input type="text" id="authName" placeholder="输入昵称" maxlength="10"></div>
+            <div class="input-group"><input type="password" id="authPwd" placeholder="输入密码"></div>
+            <button class="btn" id="authBtn" onclick="doAuth()" style="width:100%">登 录</button>
+            <div class="switch-auth" id="authSwitch" onclick="toggleAuth()">没有账号？去注册</div>
+        </div>
     </div>
-</div>
 
-<!-- 主界面 -->
-<div class="page hide" id="mainPage">
-    <header>
-        <div class="header-left">
-            <div class="avatar-btn" onclick="openDrawer()">≡</div>
-            <span id="headerTitle">消息</span>
-        </div>
-        <div class="add-btn" onclick="openActionMenu()">＋</div>
-    </header>
-    
-    <main>
-        <div class="tab-content active" id="tab-chats"></div>
-        <div class="tab-content" id="tab-contacts"></div>
-        <div class="tab-content" id="tab-moments" style="padding:10px; background:#f2f2f2;">
-            <div id="momentsList"></div>
-        </div>
-        <div class="tab-content" id="tab-me" style="background:#fff;">
-            <div style="display:flex; padding:30px 20px; gap:20px; align-items:center; border-bottom:1px solid #eee;">
-                <div class="list-avatar" style="width:70px; height:70px; font-size:24px;">我</div>
-                <div>
-                    <h2 id="meName" style="font-size:22px; margin-bottom:5px; display:flex; align-items:center;"></h2>
-                    <p style="color:#999; font-size:13px;">QQ号: <span id="meId"></span></p>
+    <!-- 主界面 -->
+    <div class="page hide" id="mainPage">
+        <header>
+            <div class="header-left">
+                <div class="avatar-btn" onclick="openDrawer()">≡</div>
+                <span id="headerTitle">消息</span>
+            </div>
+            <div class="add-btn" onclick="openActionMenu()">＋</div>
+        </header>
+        
+        <main>
+            <div class="tab-content active" id="tab-chats"></div>
+            <div class="tab-content" id="tab-contacts"></div>
+            <div class="tab-content" id="tab-moments" style="padding:10px; background:#f2f2f2;">
+                <div id="momentsList"></div>
+            </div>
+            <div class="tab-content" id="tab-me" style="background:#fff;">
+                <div style="display:flex; padding:30px 20px; gap:20px; align-items:center; border-bottom:1px solid #eee;">
+                    <div class="list-avatar" style="width:70px; height:70px; font-size:24px;">我</div>
+                    <div>
+                        <h2 id="meName" style="font-size:22px; margin-bottom:5px; display:flex; align-items:center;"></h2>
+                        <p style="color:#999; font-size:13px;">QQ号: <span id="meId"></span></p>
+                    </div>
+                </div>
+                <div class="list-item" onclick="certify10Times()" style="justify-content:space-between; margin-top:20px;">
+                    <span>官方认证</span>
+                    <span style="color:#999; font-size:13px;">点击申请 ></span>
                 </div>
             </div>
-            <div class="list-item" onclick="certify10Times()" style="justify-content:space-between; margin-top:20px;">
-                <span>官方认证</span>
-                <span style="color:#999; font-size:13px;">点击申请 ></span>
+        </main>
+
+        <nav>
+            <div class="nav-item active" onclick="switchTab('chats', this)"><div class="nav-icon">💬</div>消息</div>
+            <div class="nav-item" onclick="switchTab('contacts', this)"><div class="nav-icon">👥</div>联系人</div>
+            <div class="nav-item" onclick="switchTab('moments', this)"><div class="nav-icon">🌍</div>动态</div>
+            <div class="nav-item" onclick="switchTab('me', this)"><div class="nav-icon">👤</div>我</div>
+        </nav>
+    </div>
+
+    <!-- 底部操作菜单 -->
+    <div id="actionMenuBg" onclick="closeActionMenu()"></div>
+    <div id="actionMenu">
+        <div class="action-btn" onclick="openSearchModal()">添加好友</div>
+        <div class="action-btn" onclick="showPostMomentDialog()">发布动态</div>
+        <div class="action-btn" onclick="closeActionMenu()" style="color:#999; border:none;">取消</div>
+    </div>
+
+    <!-- 侧滑栏 -->
+    <div id="drawerBg" onclick="closeDrawer()"></div>
+    <div id="drawer">
+        <div class="drawer-header">
+            <div class="drawer-avatar">我</div>
+            <div><h3 id="drawerName" style="display:flex; align-items:center;"></h3><p>在线</p></div>
+        </div>
+        <div class="drawer-menu">
+            <div class="drawer-item" onclick="openLeopardMenu()"><span>专属豹子号中心</span></div>
+            <div class="drawer-item" onclick="location.reload()"><span>退出登录</span></div>
+        </div>
+    </div>
+
+    <!-- 聊天页面 -->
+    <div class="page" id="chatPage">
+        <div id="chatHeader">
+            <div class="back-btn" onclick="closeChat()">＜</div><div id="chatName"></div>
+        </div>
+        <div id="chatMessages"></div>
+        <div id="chatInputArea">
+            <input type="text" id="chatInput" placeholder="发送消息..." onkeydown="if(event.key==='Enter')sendMsg()">
+            <button class="send-btn" onclick="sendMsg()">发送</button>
+        </div>
+    </div>
+
+    <!-- 搜索好友弹窗 -->
+    <div class="modal" id="searchModal">
+        <div class="modal-box">
+            <h3>添加好友</h3><p>输入对方准确昵称或QQ号</p>
+            <input type="text" id="searchInput" placeholder="输入搜索...">
+            <div id="searchResultBox" style="margin-bottom:15px;"></div>
+            <div class="modal-btns">
+                <button class="btn-cancel" onclick="closeSearchModal()">取消</button>
+                <button class="btn-ok" onclick="doSearch()">搜索</button>
             </div>
         </div>
-    </main>
-
-    <nav>
-        <div class="nav-item active" onclick="switchTab('chats', this)"><div class="nav-icon">💬</div>消息</div>
-        <div class="nav-item" onclick="switchTab('contacts', this)"><div class="nav-icon">👥</div>联系人</div>
-        <div class="nav-item" onclick="switchTab('moments', this)"><div class="nav-icon">🌍</div>动态</div>
-        <div class="nav-item" onclick="switchTab('me', this)"><div class="nav-icon">👤</div>我</div>
-    </nav>
-</div>
-
-<!-- 底部操作菜单 -->
-<div id="actionMenuBg" onclick="closeActionMenu()"></div>
-<div id="actionMenu">
-    <div class="action-btn" onclick="openSearchModal()">添加好友</div>
-    <div class="action-btn" onclick="showPostMomentDialog()">发布动态</div>
-    <div class="action-btn" onclick="closeActionMenu()">取消</div>
-</div>
-
-<!-- 侧滑栏 -->
-<div id="drawerBg" onclick="closeDrawer()"></div>
-<div id="drawer">
-    <div class="drawer-header">
-        <div class="drawer-avatar">我</div>
-        <div><h3 id="drawerName" style="display:flex; align-items:center;"></h3><p>在线</p></div>
     </div>
-    <div class="drawer-menu">
-        <div class="drawer-item" onclick="openLeopardMenu()"><span>专属豹子号中心</span></div>
-        <div class="drawer-item" onclick="location.reload()"><span>退出登录</span></div>
-    </div>
-</div>
 
-<!-- 聊天页面 -->
-<div class="page" id="chatPage">
-    <div id="chatHeader">
-        <div class="back-btn" onclick="closeChat()">＜</div><div id="chatName"></div>
-    </div>
-    <div id="chatMessages"></div>
-    <div id="chatInputArea">
-        <input type="text" id="chatInput" placeholder="发送消息..." onkeydown="if(event.key==='Enter')sendMsg()">
-        <button class="send-btn" onclick="sendMsg()">发送</button>
-    </div>
-</div>
-
-<!-- 搜索好友弹窗 -->
-<div class="modal" id="searchModal">
-    <div class="modal-box">
-        <h3>添加好友</h3><p>输入昵称或QQ号</p>
-        <input type="text" id="searchInput" placeholder="输入搜索...">
-        <div id="searchResultBox" style="margin-bottom:15px;"></div>
-        <div class="modal-btns">
-            <button class="btn-cancel" onclick="closeSearchModal()">取消</button>
-            <button class="btn-ok" onclick="doSearch()">搜索</button>
+    <!-- 好友申请弹窗 (接收到别人申请时弹出) -->
+    <div class="modal" id="friendReqModal">
+        <div class="modal-box">
+            <h3>好友申请</h3>
+            <p id="friendReqText" style="font-size:16px; color:#12b7f5; font-weight:bold;"></p>
+            <div class="modal-btns">
+                <button class="btn-cancel" onclick="rejectFriend()">拒绝</button>
+                <button class="btn-ok" onclick="acceptFriend()">同意</button>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- 通用操作弹窗 -->
-<div class="modal" id="modal">
-    <div class="modal-box">
-        <h3 id="modalTitle">提示</h3><p id="modalText"></p>
-        <input type="text" id="modalInput">
-        <div class="modal-btns">
-            <button class="btn-cancel" onclick="closeModal()">取消</button>
-            <button class="btn-ok" onclick="modalConfirm()">确定</button>
+    <!-- 通用输入弹窗 (发动态/验证卡密) -->
+    <div class="modal" id="modal">
+        <div class="modal-box">
+            <h3 id="modalTitle">提示</h3><p id="modalText"></p>
+            <input type="text" id="modalInput">
+            <div class="modal-btns">
+                <button class="btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn-ok" onclick="modalConfirm()">确定</button>
+            </div>
         </div>
     </div>
-</div>
-
-<!-- 豹子号弹窗 -->
-<div class="modal" id="leopardModal">
-    <div class="modal-box">
-        <h3>豹子号中心</h3>
-        <div id="lpList" style="margin-bottom:15px; text-align:left; max-height:200px; overflow-y:auto;"></div>
-        <div class="modal-btns"><button class="btn-cancel" onclick="closeLeopard()">取消</button></div>
-    </div>
-</div>
-
-<!-- 绝美远程公告弹窗 -->
-<div class="notice-modal-mask" id="noticeModal">
-    <div class="notice-card">
-        <div class="notice-header">
-            <div class="notice-icon" id="noticeIcon">📢</div>
-            <div class="notice-title" id="noticeTitle">系统公告</div>
+      <div class="modal" id="leopardModal">
+        <div class="modal-box">
+            <h3>豹子号中心</h3>
+            <div id="lpList" style="margin-bottom:15px; text-align:left; max-height:200px; overflow-y:auto;"></div>
+            <div class="modal-btns"><button class="btn-cancel" onclick="closeLeopard()">取消</button></div>
         </div>
-        <div class="notice-body" id="noticeContent"></div>
-        <div class="notice-footer" id="noticeBtns"></div>
     </div>
+
+    <!-- 绝美远程公告弹窗 -->
+    <div class="notice-modal-mask" id="noticeModal">
+        <div class="notice-card">
+            <div class="notice-header">
+                <div class="notice-icon" id="noticeIcon">📢</div>
+                <div class="notice-title" id="noticeTitle">系统公告</div>
+            </div>
+            <div class="notice-body" id="noticeContent"></div>
+            <div class="notice-footer" id="noticeBtns"></div>
+        </div>
+    </div>
+    
+    <!-- 顶部提示 -->
+    <div id="toast"></div>
 </div>
 
 <script>
-    const BROKER = 'wss://broker.emqx.io:8084/mqtt';
-const TOPIC_GLOBAL = 'qq_clone_global_v999'; // 聊天与搜索
+/* ================= 核心变量 ================= */
+const BROKER = 'wss://broker.emqx.io:8084/mqtt';
+const TOPIC_GLOBAL = 'qq_clone_global_v999';
 const TOPIC_NOTICE = 'qq_clone_notice_channel_888';
 const TOPIC_SYS = 'qq_clone_system_status_v1';
 
@@ -274,13 +288,22 @@ let globalUsers = JSON.parse(localStorage.getItem('qq_global_users')) || {};
 let activeChatId = null;
 
 let leopardSlots = { "1111111": [], "9999999": [], "0000000": [], "1234567": [], "7777777": [] };
-let isCheckingName = false;
 let searchReqId = null;
-
 let sysData = { banList: {}, isStopped: false, stopReason: "" };
 let isSystemBlocked = false;
 
+// 收到的临时好友申请
+let pendingFriendReq = null;
+
 window.onload = () => { initMQTT(); if (currentUser) enterMain(); };
+
+/* ================= 提示工具 ================= */
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.innerText = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+}
 
 /* ================= 封禁与停服阻断 ================= */
 function blockSystem(type, reason) {
@@ -290,14 +313,11 @@ function blockSystem(type, reason) {
     const blockDiv = document.createElement('div');
     blockDiv.className = 'system-block-screen';
     if (type === 'ban') {
-        blockDiv.innerHTML = `<div class="ban-icon">🚫</div><div class="ban-title">账号已被封禁</div><div class="ban-content">${reason}</div><div class="fake-btn">系统锁定中</div>`;
+        blockDiv.innerHTML = `<div class="ban-icon">🚫</div><div class="ban-title">账号已被封禁</div><div class="ban-content">${reason}</div>`;
     } else {
-        blockDiv.innerHTML = `<div class="stop-icon">⚠️</div><div class="stop-title">服务器停服通知</div><div class="ban-content">${reason}</div><div class="fake-btn">服务器已断开</div>`;
+        blockDiv.innerHTML = `<div class="stop-icon">⚠️</div><div class="stop-title">服务器停服通知</div><div class="ban-content">${reason}</div>`;
     }
     document.body.appendChild(blockDiv);
-    const blockEvent = (e) => { e.preventDefault(); e.stopPropagation(); return false; };
-    document.addEventListener('touchstart', blockEvent, { passive: false });
-    document.addEventListener('click', blockEvent, { passive: false });
     setInterval(() => { if (!document.querySelector('.system-block-screen')) { document.body.innerHTML = ''; document.body.appendChild(blockDiv); } }, 1000);
 }
 
@@ -307,95 +327,70 @@ function checkSystemStatus() {
     if (currentUser && sysData.banList) {
         const banInfo = sysData.banList[currentUser.id] || sysData.banList[currentUser.name];
         if (banInfo && Date.now() <= banInfo.banUntil) {
-            const expDate = new Date(banInfo.banUntil).toLocaleString();
-            blockSystem('ban', `封禁理由：${banInfo.reason}<br><br>解封时间：${expDate}`);
+            blockSystem('ban', `封禁理由：${banInfo.reason}<br><br>解封时间：${new Date(banInfo.banUntil).toLocaleString()}`);
         }
     }
 }
 
-/* ================= 超级稳定的 MQTT 通信 ================= */
+/* ================= 核心通信 ================= */
 function initMQTT() {
     client = mqtt.connect(BROKER);
     client.on('connect', () => {
-        client.subscribe(TOPIC_GLOBAL); 
-        client.subscribe(TOPIC_NOTICE); 
-        client.subscribe(TOPIC_SYS);
+        client.subscribe(TOPIC_GLOBAL); client.subscribe(TOPIC_NOTICE); client.subscribe(TOPIC_SYS);
 
         if(currentUser) {
             const myInfo = { name: currentUser.name, id: currentUser.id, official: currentUser.official, leopard: currentUser.leopard };
-            // 上线立刻广播名片
             client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'online', user: myInfo }));
-            
-            // 心跳广播，每隔10秒广播一次自己，确保全服都有你的缓存
-            setInterval(() => {
-                client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'online', user: myInfo }));
-            }, 10000);
+            // 心跳保活
+            setInterval(() => { client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'online', user: myInfo })); }, 10000);
         }
     });
 
     client.on('message', (topic, msg) => {
         try {
             const data = JSON.parse(msg.toString());
-            
-            // 系统封禁/停服
             if (topic === TOPIC_SYS) { sysData = data; checkSystemStatus(); return; }
-            // 远程公告
             if (topic === TOPIC_NOTICE) { handleRemoteNotice(data); return; }
             
-            // ================= 核心：全网用户信息收集 =================
-            if (data.type === 'online' || data.type === 'register' || data.type === 'info_update') {
-                // 把收到的任何人存进本地数据库
-                globalUsers[data.user.id] = data.user;
-                saveData();
-                return; 
+            // 收集玩家信息
+            if (data.type === 'online' || data.type === 'info_update') {
+                globalUsers[data.user.id] = data.user; saveData(); return; 
             }
 
-            // 重名拦截
-            if (data.type === 'check_name' && currentUser && data.name === currentUser.name) {
-                client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'name_exists', reqId: data.reqId })); 
-                return;
-            }
+            if (!currentUser) return;
 
-            // 搜索请求与响应
-            if (data.type === 'search_req' && currentUser) {
-                // 如果有人搜我，我不仅要广播自己的消息，还要针对该请求回复
+            if (data.type === 'search_req') {
                 if (data.keyword === currentUser.name || data.keyword === currentUser.id) {
-                    client.publish(TOPIC_GLOBAL, JSON.stringify({ 
-                        type: 'search_res', reqId: data.reqId, user: { name: currentUser.name, id: currentUser.id, official: currentUser.official, leopard: currentUser.leopard } 
-                    }));
+                    client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'search_res', reqId: data.reqId, user: { name: currentUser.name, id: currentUser.id, official: currentUser.official, leopard: currentUser.leopard } }));
                 }
             } 
             else if (data.type === 'search_res' && data.reqId === searchReqId) {
-                globalUsers[data.user.id] = data.user; saveData(); 
-                renderSearchResult([data.user]); 
-                searchReqId = null; // 找到了就不等了
+                globalUsers[data.user.id] = data.user; saveData(); renderSearchResult([data.user]); searchReqId = null;
+            }
+            // 收到好友申请
+            else if (data.type === 'add_friend' && data.toName === currentUser.name) {
+                pendingFriendReq = data.fromUser;
+                document.getElementById('friendReqText').innerText = `【${data.fromUser.name}】想申请添加您为好友`;
+                document.getElementById('friendReqModal').classList.add('show');
+            }
+            // 对方同意了我的申请
+            else if (data.type === 'friend_ok' && data.toName === currentUser.name) {
+                const newFriend = data.fromUser;
+                if (!friends.find(f => f.name === newFriend.name)) {
+                    friends.push(newFriend);
+                    saveData(); renderChats(); renderContacts();
+                    showToast(`✅ ${newFriend.name} 已通过你的好友申请`);
+                }
             }
             // 聊天
-            else if (data.type === 'chat' && currentUser && data.toName === currentUser.name) {
+            else if (data.type === 'chat' && data.toName === currentUser.name) {
                 receiveMessage(data.fromName, data.text);
             }
-            // 加好友逻辑
-            else if (data.type === 'add_friend' && currentUser && data.toName === currentUser.name) {
-                const fromUser = data.fromUser;
-                if (!friends.find(f => f.name === fromUser.name)) {
-                    friends.push({ id: fromUser.id, name: fromUser.name, official: fromUser.official, leopard: fromUser.leopard });
-                    saveData(); renderChats(); renderContacts();
-                    client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'friend_ok', targetName: fromUser.name, myUser: currentUser }));
-                    alert(`📢 ${fromUser.name} 已添加你为好友！`);
-                }
+            // 动态
+            else if (data.type === 'moment') {
+                moments.unshift(data.moment); renderMoments(); saveData();
             }
-            else if (data.type === 'friend_ok' && currentUser && data.targetName === currentUser.name) {
-                const myUser = data.myUser;
-                if (!friends.find(f => f.name === myUser.name)) {
-                    friends.push({ id: myUser.id, name: myUser.name, official: myUser.official, leopard: myUser.leopard });
-                    saveData(); renderChats(); renderContacts();
-                    alert(`✅ ${myUser.name} 已通过你的好友请求！`);
-                }
-            }
-            // 动态、豹子号
-            else if (data.type === 'moment') { moments.unshift(data.moment); renderMoments(); saveData(); }
             else if (data.type === 'leopard_update') { leopardSlots = data.slots; }
-            
         } catch(e) {}
     });
 }
@@ -405,13 +400,9 @@ function doAuth() {
     const pwd = document.getElementById('authPwd').value.trim();
     if (!name || !pwd) return alert("昵称和密码不能为空");
 
-    if (isLoginMode) {
-        currentUser = { id: Date.now().toString(), name: name, pwd: pwd, official: false, leopard: null };
-        saveData(); checkSystemStatus(); if (!isSystemBlocked) enterMain();
-    } else {
-        currentUser = { id: Date.now().toString(), name: name, pwd: pwd, official: false, leopard: null };
-        saveData(); checkSystemStatus(); if (!isSystemBlocked) enterMain();
-    }
+    currentUser = { id: Date.now().toString(), name: name, pwd: pwd, official: false, leopard: null };
+    saveData(); checkSystemStatus(); 
+    if (!isSystemBlocked) enterMain();
 }
 
 function enterMain() {
@@ -430,63 +421,41 @@ function saveData() {
     localStorage.setItem('qq_global_users', JSON.stringify(globalUsers));
 }
 
-/* ================= 绝美远程公告处理逻辑 ================= */
-function handleRemoteNotice(data) {
-    const hash = btoa(encodeURIComponent(data.title + data.content));
-    if (hash === localStorage.getItem('last_read_notice')) return;
-
-    const modal = document.getElementById('noticeModal');
-    const icon = document.getElementById('noticeIcon');
-    const title = document.getElementById('noticeTitle');
-    const content = document.getElementById('noticeContent');
-    const btnBox = document.getElementById('noticeBtns');
-
-    title.innerText = data.title;
-    content.innerText = data.content;
-
-    if (data.type === 'update') {
-        icon.innerText = '🚀'; 
-        icon.style.background = 'rgba(255,65,108,0.2)';
-        btnBox.innerHTML = `<button class="notice-btn-main notice-btn-update" onclick="window.open('${data.url}', '_blank'); closeNotice('${hash}')">立即前往更新</button>`;
-    } else {
-        icon.innerText = '📢'; 
-        icon.style.background = 'rgba(255,255,255,0.2)';
-        btnBox.innerHTML = `<button class="notice-btn-main" onclick="closeNotice('${hash}')">我知道了</button>`;
+/* ================= 好友申请处理 ================= */
+function acceptFriend() {
+    if (pendingFriendReq) {
+        // 同意后，把对方加进我的列表
+        if (!friends.find(f => f.id === pendingFriendReq.id)) {
+            friends.push(pendingFriendReq);
+            saveData(); renderChats(); renderContacts();
+        }
+        // 回复对方我同意了
+        client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'friend_ok', toName: pendingFriendReq.name, fromUser: currentUser }));
+        showToast(`已添加 ${pendingFriendReq.name} 为好友`);
     }
-    modal.classList.add('show');
+    closeFriendReq();
+}
+function rejectFriend() { closeFriendReq(); }
+function closeFriendReq() {
+    pendingFriendReq = null;
+    document.getElementById('friendReqModal').classList.remove('show');
 }
 
-function closeNotice(hash) {
-    localStorage.setItem('last_read_notice', hash);
-    document.getElementById('noticeModal').classList.remove('show');
-}
+/* ================= 搜索逻辑 ================= */
+function openSearchModal() { closeActionMenu(); document.getElementById('searchInput').value=''; document.getElementById('searchResultBox').innerHTML=''; document.getElementById('searchModal').classList.add('show'); }
+function closeSearchModal() { document.getElementById('searchModal').classList.remove('show'); }
+
 function doSearch() {
-    const kw = document.getElementById('searchInput').value.trim(); 
-    if (!kw) return;
-    const box = document.getElementById('searchResultBox'); 
-    box.innerHTML = '<div style="text-align:center; padding:10px; color:#12b7f5;">正在全网搜索玩家...</div>';
-    
-    // 1. 先从本地缓存（心跳广播收集来的数据）里找
+    const kw = document.getElementById('searchInput').value.trim(); if (!kw) return;
+    const box = document.getElementById('searchResultBox'); box.innerHTML = '<div style="text-align:center; padding:10px; color:#12b7f5;">全网搜索中...</div>';
     let localResults = [];
-    for (let id in globalUsers) { 
-        if (globalUsers[id].name === kw || globalUsers[id].id === kw) localResults.push(globalUsers[id]); 
-    }
+    for (let id in globalUsers) { if (globalUsers[id].name === kw || globalUsers[id].id === kw) localResults.push(globalUsers[id]); }
     
-    if (localResults.length > 0) {
-        // 缓存命中，秒出结果
-        renderSearchResult(localResults);
-    } else {
-        // 2. 缓存没命中，发送全网广播求答
+    if (localResults.length > 0) renderSearchResult(localResults);
+    else {
         searchReqId = 's_' + Date.now();
         client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'search_req', keyword: kw, reqId: searchReqId }));
-        
-        // 1.5 秒内如果没人回应，提示找不到
-        setTimeout(() => { 
-            if (searchReqId) { 
-                box.innerHTML = '<div style="text-align:center; color:#f66; padding:10px;">未找到该玩家，请确保对方已打开过此网页</div>'; 
-                searchReqId = null; 
-            } 
-        }, 1500);
+        setTimeout(() => { if (searchReqId) { box.innerHTML = '<div style="text-align:center; color:#f66; padding:10px;">未找到该玩家</div>'; searchReqId = null; } }, 1500);
     }
 }
 
@@ -507,7 +476,32 @@ function sendAddFriend(targetName, btn) {
     client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'add_friend', toName: targetName, fromUser: currentUser })); 
 }
 
-/* ================= 其余常规 UI 逻辑 ================= */
+/* ================= 发动态逻辑 ================= */
+function showPostMomentDialog() { 
+    closeActionMenu(); 
+    showModal("发布动态", "分享你的新鲜事", true, (text) => { 
+        if (!text) return; 
+        const moment = { sender: currentUser.name, official: currentUser.official, text: text, time: new Date().toLocaleTimeString() }; 
+        moments.unshift(moment); renderMoments(); saveData(); 
+        client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'moment', moment: moment })); 
+        showToast("发布成功");
+    }, "说点什么..."); 
+}
+
+/* ================= 绝美公告 ================= */
+function handleRemoteNotice(data) {
+    const hash = btoa(encodeURIComponent(data.title + data.content));
+    if (hash === localStorage.getItem('last_read_notice')) return;
+    document.getElementById('noticeTitle').innerText = data.title;
+    document.getElementById('noticeContent').innerText = data.content;
+    const btns = document.getElementById('noticeBtns');
+    if (data.type === 'update') btns.innerHTML = `<button class="notice-btn-main notice-btn-update" onclick="window.open('${data.url}', '_blank'); closeNotice('${hash}')">立即更新</button>`;
+    else btns.innerHTML = `<button class="notice-btn-main" onclick="closeNotice('${hash}')">我知道了</button>`;
+    document.getElementById('noticeModal').classList.add('show');
+}
+function closeNotice(hash) { localStorage.setItem('last_read_notice', hash); document.getElementById('noticeModal').classList.remove('show'); }
+
+/* ================= 其他 UI ================= */
 function getSpecialTags(user) {
     let html = '';
     if (user.leopard) html += `<span class="leopard-tag">${user.leopard}</span>`;
@@ -515,7 +509,6 @@ function getSpecialTags(user) {
     return html;
 }
 function updateMeUI() {
-    if(!currentUser) return;
     document.getElementById('meName').innerHTML = currentUser.name + getSpecialTags(currentUser);
     document.getElementById('drawerName').innerHTML = currentUser.name + getSpecialTags(currentUser);
     document.getElementById('meId').innerText = currentUser.id;
@@ -575,19 +568,49 @@ function openDrawer() { document.getElementById('drawer').classList.add('show');
 function closeDrawer() { document.getElementById('drawer').classList.remove('show'); document.getElementById('drawerBg').classList.remove('show'); }
 function openActionMenu() { document.getElementById('actionMenuBg').classList.add('show'); document.getElementById('actionMenu').classList.add('show'); }
 function closeActionMenu() { document.getElementById('actionMenuBg').classList.remove('show'); document.getElementById('actionMenu').classList.remove('show'); }
-function openSearchModal() { closeActionMenu(); document.getElementById('searchInput').value=''; document.getElementById('searchResultBox').innerHTML=''; document.getElementById('searchModal').classList.add('show'); }
-function closeSearchModal() { document.getElementById('searchModal').classList.remove('show'); }
-function showPostMomentDialog() { closeActionMenu(); showModal("发布动态", "分享你的新鲜事", true, (text) => { if (!text) return; const moment = { sender: currentUser.name, official: currentUser.official, text: text, time: new Date().toLocaleTimeString() }; moments.unshift(moment); renderMoments(); saveData(); client.publish(TOPIC_GLOBAL, JSON.stringify({ type: 'moment', moment: moment })); }, "说点什么..."); }
-function renderMoments() { const box = document.getElementById('momentsList'); box.innerHTML = ''; moments.forEach(m => { box.innerHTML += `<div style="background:#fff; padding:15px; margin-bottom:10px;"><b>${m.sender}</b> ${m.official?'<span class="official-icon">V</span>':''}<p style="margin-top:10px;font-size:15px;">${m.text}</p></div>`; }); }
+
+// 动态渲染
+function renderMoments() { const box = document.getElementById('momentsList'); box.innerHTML = ''; moments.forEach(m => { box.innerHTML += `<div style="background:#fff; padding:15px; margin-bottom:10px; border-radius:8px;"><b>${m.sender}</b> ${m.official?'<span class="official-icon">V</span>':''}<p style="margin-top:10px;font-size:15px;">${m.text}</p></div>`; }); }
+
+// 豹子号与官方认证
 function openLeopardMenu() { document.getElementById('leopardModal').classList.add('show'); const list = document.getElementById('lpList'); list.innerHTML=''; for(let num in leopardSlots) { list.innerHTML += `<div style="padding:10px;border-bottom:1px solid #eee;cursor:pointer;" onclick="claimLeopard('${num}')">${num} (剩余${2-leopardSlots[num].length})</div>`; } }
 function closeLeopard() { document.getElementById('leopardModal').classList.remove('show'); }
-function claimLeopard(num) { if (currentUser.leopard) return alert("你已经有豹子号了！"); showModal("验证卡密", "请输入卡密", true, (pwd) => { if (pwd === '作者牛逼666') { currentUser.leopard = num; saveData(); updateMeUI(); closeLeopard(); client.publish(TOPIC_GLOBAL, JSON.stringify({type:'leopard_update', slots:leopardSlots})); } else alert('卡密错误'); }); }
-function certify10Times() { if (currentUser.official) return alert("已认证"); showModal("官方认证", "输入密钥", true, (val) => { if (val === '作者牛逼') { currentUser.official = true; saveData(); updateMeUI(); } else alert('错误'); }); }
+function claimLeopard(num) { 
+    if (currentUser.leopard) return showToast("你已经有豹子号了！"); 
+    showModal("验证卡密", "请输入豹子号专属卡密", true, (pwd) => { 
+        if (pwd.replace(/\s/g, '') === '作者牛逼666') { 
+            currentUser.leopard = num; saveData(); updateMeUI(); closeLeopard(); client.publish(TOPIC_GLOBAL, JSON.stringify({type:'leopard_update', slots:leopardSlots})); 
+            showToast("恭喜抢注成功！");
+        } else { showToast('卡密错误'); } 
+    }); 
+}
+function certify10Times() { 
+    if (currentUser.official) return showToast("已认证"); 
+    showModal("官方认证", "请输入内部密钥", true, (val) => { 
+        if (val.replace(/\s/g, '') === '作者牛逼') { 
+            currentUser.official = true; saveData(); updateMeUI(); showToast("认证成功！金V已点亮"); 
+        } else { showToast('密钥错误'); } 
+    }); 
+}
 
+// 通用输入弹窗
 let modalCallback = null;
-function showModal(title, text, needInput, callback, placeholder) { document.getElementById('modalTitle').innerText = title; document.getElementById('modalText').innerText = text; document.getElementById('modalInput').style.display = needInput ? 'block' : 'none'; document.getElementById('modal').classList.add('show'); modalCallback = callback; }
+function showModal(title, text, needInput, callback, placeholder) { 
+    document.getElementById('modalTitle').innerText = title; 
+    document.getElementById('modalText').innerText = text; 
+    const inp = document.getElementById('modalInput');
+    inp.style.display = needInput ? 'block' : 'none'; 
+    inp.value = '';
+    inp.placeholder = placeholder || "请输入...";
+    document.getElementById('modal').classList.add('show'); 
+    modalCallback = callback; 
+}
 function closeModal() { document.getElementById('modal').classList.remove('show'); modalCallback = null; }
-function modalConfirm() { const val = document.getElementById('modalInput').value; closeModal(); if (modalCallback) modalCallback(val); }
+function modalConfirm() { 
+    const val = document.getElementById('modalInput').value; 
+    if (modalCallback) modalCallback(val); // 先执行回调
+    closeModal(); 
+}
 function switchTab(tabId, el) { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active')); document.getElementById('tab-' + tabId).classList.add('active'); document.getElementById('headerTitle').innerText = el.innerText.replace(/\n/g, ''); }
 </script>
 </body>
